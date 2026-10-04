@@ -41,7 +41,7 @@ type GoogleClaims = { sub: string; email?: string; email_verified?: boolean; nam
 export async function handleGoogleCallback(
   params: { code: string | null; state: string | null },
   ctx: RequestContext,
-): Promise<{ redirectTo: string }> {
+): Promise<{ redirectTo: string; userId: string }> {
   const jar = await cookies();
   const expectedState = jar.get(STATE_COOKIE)?.value;
   const verifier = jar.get(VERIFIER_COOKIE)?.value;
@@ -107,5 +107,5 @@ export async function handleGoogleCallback(
   await createSession(userId, { isAdmin, twoFactorPassed: !needsSecondFactor, ip: ctx.ip, userAgent: ctx.userAgent });
   await db.user.update({ where: { id: userId }, data: { lastLoginAt: new Date() } });
   logger.info("auth_google_login", { userId });
-  return { redirectTo: needsSecondFactor ? `/2fa?next=${encodeURIComponent(next)}` : next };
+  return { redirectTo: needsSecondFactor ? `/2fa?next=${encodeURIComponent(next)}` : next, userId };
 }

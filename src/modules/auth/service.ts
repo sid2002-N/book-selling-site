@@ -82,7 +82,7 @@ export async function register(input: unknown, ctx: RequestContext): Promise<{ u
   return { userId: user.id };
 }
 
-export type LoginResult = { next: "done" | "two_factor"; isAdmin: boolean };
+export type LoginResult = { next: "done" | "two_factor"; isAdmin: boolean; userId: string };
 
 export async function login(input: unknown, ctx: RequestContext): Promise<LoginResult> {
   const { email, password, remember } = loginSchema.parse(input);
@@ -155,7 +155,7 @@ export async function login(input: unknown, ctx: RequestContext): Promise<LoginR
   });
   if (isAdmin) await db.adminUser.update({ where: { userId: user.id }, data: { lastAdminLoginAt: new Date() } });
   logger.info("auth_login", { userId: user.id, twoFactor: needsSecondFactor });
-  return { next: needsSecondFactor ? "two_factor" : "done", isAdmin };
+  return { next: needsSecondFactor ? "two_factor" : "done", isAdmin, userId: user.id };
 }
 
 export async function verifyEmail(token: string): Promise<{ userId: string }> {

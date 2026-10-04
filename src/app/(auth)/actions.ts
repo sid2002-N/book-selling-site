@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 import { toFormState, type FormState } from "@/lib/form-state";
 import { requestContext } from "@/lib/request";
+import { mergeGuestCart } from "@/modules/cart";
+import { claimGuestOrdersForUser } from "@/modules/checkout";
 import {
   login,
   logout,
@@ -20,7 +22,8 @@ const str = (fd: FormData, key: string) => String(fd.get(key) ?? "");
 export async function registerAction(_prev: FormState, fd: FormData): Promise<FormState> {
   const next = safeNext(str(fd, "next"), "/account");
   try {
-    await register({ name: str(fd, "name"), email: str(fd, "email"), password: str(fd, "password") }, await requestContext());
+    const { userId } = await register({ name: str(fd, "name"), email: str(fd, "email"), password: str(fd, "password") }, await requestContext());
+    await mergeGuestCart(userId);
   } catch (error) {
     return { ...toFormState(error), values: { name: str(fd, "name"), email: str(fd, "email") } };
   }
@@ -43,6 +46,8 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
     }
     return { ...state, values: { email: str(fd, "email") } };
   }
+  await mergeGuestCart(result.userId);
+  await claimGuestOrdersForUser(result.userId);
   if (result.next === "two_factor") redirect(`/2fa?next=${encodeURIComponent(next)}`);
   redirect(next);
 }

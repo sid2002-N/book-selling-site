@@ -13,13 +13,15 @@ export function isCurrency(value: string): value is Currency {
   return (CURRENCIES as readonly string[]).includes(value);
 }
 
-export function formatMoney(money: Money, options: { showZeroDecimals?: boolean } = {}): string {
+export function formatMoney(money: Money, options: { showZeroDecimals?: boolean; code?: boolean } = {}): string {
   const digits = MINOR_DIGITS[money.currency];
   const major = money.amountMinor / 10 ** digits;
   const whole = Number.isInteger(major);
   return new Intl.NumberFormat(LOCALE[money.currency], {
     style: "currency",
     currency: money.currency,
+    // ISO code instead of a symbol where the symbol can't be rendered (e.g. PDF base fonts).
+    currencyDisplay: options.code ? "code" : "symbol",
     minimumFractionDigits: whole && !options.showZeroDecimals ? 0 : digits,
     maximumFractionDigits: digits,
   }).format(major);

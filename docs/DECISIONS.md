@@ -11,7 +11,7 @@ Status legend: **Accepted** (stated in your source prompts) · **Proposed** (age
 | DEC-005 | Storage | **Accepted** (4 Oct 2026) | Cloudflare R2 (S3 API): private bucket for paid files, public/CDN bucket for images; local filesystem adapter for dev | Signed URLs; portability; matches Storage Settings mockup |
 | DEC-006 | Styling | **Accepted** (4 Oct 2026) | Tailwind + CSS-variable tokens + Radix primitives + Lucide | Token-driven consistency + accessibility |
 | DEC-007 | Search | **Accepted** (4 Oct 2026) | Postgres FTS + trigram behind `SearchPort` | Zero extra infra; swap later |
-| DEC-008 | Jobs | **Accepted** (4 Oct 2026) | Inngest for background jobs (webhook processing, previews, emails, reconciliation); Vercel hosting | Works on Vercel serverless; local dev server |
+| DEC-008 | Jobs | **Accepted** (4 Oct 2026, revised in M4) | Vercel Cron → secret-protected internal routes (`/api/v1/internal/*`, `Authorization: Bearer $CRON_SECRET`). Webhooks are verified, stored once and processed inline (idempotent), so no queue is needed for v1. Inngest stays the upgrade path if job volume or fan-out grows | One less vendor; every job is an idempotent HTTP handler that can move to a queue unchanged |
 | DEC-009 | PDF reading | **Accepted** (4 Oct 2026) | `pdfjs-dist` custom reader UI | Not a generic browser viewer |
 | DEC-010 | Cart quantity | **Proposed** | Fixed at 1 | Digital products; resolves C2 |
 | DEC-011 | Collection vs Bundle | **Proposed** | Editorial Collection vs sellable Bundle | Resolves C3 |
@@ -44,3 +44,15 @@ Status legend: **Accepted** (stated in your source prompts) · **Proposed** (age
 Date: · Status: Proposed|Accepted|Superseded
 Context: · Decision: · Alternatives: · Reason: · Consequences (positive / trade-off):
 ```
+
+## DEC-034 — Payment attempts and guest order access (M4)
+
+**Accepted (4 Oct 2026).**
+- One `payment` row per provider order (Razorpay order / Stripe PaymentIntent). A retry creates a new row on the same order at the same locked price; the order's idempotency key plus attempt number is the provider idempotency key.
+- Payment state changes go through one function (`applyProviderState`) under row locks (order, then payment), whether they come from the client verify call, a webhook or reconciliation. The state machine never moves `succeeded` backwards, so out-of-order webhooks are harmless.
+- A success is accepted only if the provider-reported amount and currency equal the payment row and the order total. A mismatch puts the payment in `pending_verification` and records a critical security event.
+- A second successful payment on an already-paid order is recorded as `DUPLICATE_PAYMENT` for a refund, not fulfilled twice.
+- Guest order access uses an HMAC of the order id with `AUTH_SECRET`. Only its SHA-256 is stored (`order.guest_access_hash`), which lets emails regenerate the link. Paid guest orders join an account only when the account's email is verified (on verification, login or Google sign-in).
+- Invoices are rendered on demand from the immutable `invoice.legal_snapshot` taken at payment time. The PDF base fonts can't draw ₹, so the PDF uses ISO currency codes.
+- Unpaid orders with no payment in flight are cancelled after 24 hours by the reconcile job.
+

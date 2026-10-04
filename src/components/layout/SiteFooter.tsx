@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { footerNav } from "@/config/navigation";
 import { Logo } from "./Logo";
 
@@ -6,6 +7,8 @@ type SiteFooterProps = {
   tagline?: string;
   quote?: string;
   copyright?: string;
+  /** Slot beside the copyright line (currency switcher). */
+  utility?: ReactNode;
 };
 
 /** Dark espresso footer (DESIGN_SYSTEM §12.2). Copy comes from settings, with brand defaults. */
@@ -13,6 +16,7 @@ export function SiteFooter({
   tagline = "Knowledge Resource & Management. Practical knowledge for a better you.",
   quote = "A small library for a bigger tomorrow.",
   copyright = `© ${new Date().getFullYear()} KRM.lib. All rights reserved.`,
+  utility,
 }: SiteFooterProps) {
   return (
     <footer className="mt-auto bg-ink text-fg-on-ink">
@@ -40,7 +44,10 @@ export function SiteFooter({
         </blockquote>
       </div>
       <div className="border-t border-white/10">
-        <p className="container-page py-5 text-caption text-fg-on-ink/60">{copyright}</p>
+        <div className="container-page flex flex-wrap items-center justify-between gap-3 py-5">
+          <p className="text-caption text-fg-on-ink/60">{copyright}</p>
+          {utility}
+        </div>
       </div>
     </footer>
   );

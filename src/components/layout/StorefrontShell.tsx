@@ -9,10 +9,11 @@ type StorefrontShellProps = {
   user?: HeaderUser;
   cartCount?: number;
   headerVariant?: "default" | "compact";
+  footerUtility?: ReactNode;
 };
 
 /** Header + main + footer + mobile bottom nav, shared by storefront pages and system states. */
-export function StorefrontShell({ children, user = null, cartCount = 0, headerVariant = "default" }: StorefrontShellProps) {
+export function StorefrontShell({ children, user = null, cartCount = 0, headerVariant = "default", footerUtility }: StorefrontShellProps) {
   return (
     <>
       <a
@@ -26,7 +27,7 @@ export function StorefrontShell({ children, user = null, cartCount = 0, headerVa
       <main id="main" className="flex-1">
         {children}
       </main>
-      <SiteFooter />
+      <SiteFooter utility={footerUtility} />
       {/* Keeps the footer clear of the fixed bottom bar on phones. */}
       <div aria-hidden className="h-16 bg-ink pb-safe md:hidden" />
       <MobileBottomNav />

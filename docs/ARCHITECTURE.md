@@ -51,7 +51,7 @@ KRM.lib is one product with four surfaces on one codebase and one design system:
 | Email | Provider behind `EmailPort`; React Email templates | Candidates: Resend/Postmark/SES |
 | Analytics | Behind `AnalyticsPort` | Provider TBD (OQ-14) |
 | Search | Postgres FTS + trigram v1, behind `SearchPort` | Swap to Meilisearch/Typesense later |
-| Jobs/queue | pg-boss / Inngest / BullMQ (decide) | Webhook retries, previews, emails, reconciliation |
+| Jobs/queue | Vercel Cron → internal routes (DEC-008); Inngest is the upgrade path | Payment reconciliation, abandoned-order cleanup; webhooks processed inline and idempotently |
 | Rate limiting/cache | Redis-compatible store | Auth, search, webhook, download endpoints |
 | Testing | Vitest, Testing Library, Playwright, MSW | TESTING.md |
 | Lint/format | ESLint + Prettier + `tsc --noEmit` | |
