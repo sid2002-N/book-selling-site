@@ -1,5 +1,6 @@
 import { createSeedClient } from "./client";
 import { seedDemoCatalog } from "./catalog";
+import { seedDemoLibrary } from "./library";
 import { seedMinimal } from "./minimal";
 import { seedDemoUsers } from "./users";
 
@@ -14,6 +15,7 @@ async function main() {
     if (mode === "demo") {
       await seedDemoUsers(db);
       await seedDemoCatalog(db);
+      await seedDemoLibrary(db);
     }
   } finally {
     await db.$disconnect();

@@ -56,3 +56,23 @@ Context: · Decision: · Alternatives: · Reason: · Consequences (positive / tr
 - Invoices are rendered on demand from the immutable `invoice.legal_snapshot` taken at payment time. The PDF base fonts can't draw ₹, so the PDF uses ISO currency codes.
 - Unpaid orders with no payment in flight are cancelled after 24 hours by the reconcile job.
 
+
+## DEC-035: Delivery, reader and reviews (M5)
+
+**Accepted (4 Oct 2026).**
+- **Download counting.** Each issued download counts once toward `downloads.limitPerProduct`, using `download_event` rows with status `issued` or `completed`. Denials are logged as `denied` and are not counted. Downloading the current version clears "update available".
+- **Delivery by storage driver.**
+  - R2 issues a presigned URL with `downloads.signedUrlTtlSeconds` (default 60 s).
+  - The local driver issues an HMAC token (`DOWNLOAD_SIGNING_SECRET`). The token is single-use (claimed atomically), bound to the signed-in user, and re-checks the library item on redemption.
+- **Bundles.** A bundle grants its contents as separate library items. A bundle without its own file is left out of the Download Center.
+- **Reader.**
+  - Uses `pdfjs-dist` **legacy** build, because the modern build needs `Map.prototype.getOrInsertComputed`, which current browsers don't all have.
+  - The file streams through the owner-only `/api/v1/reader/:libraryItemId/file` endpoint with byte ranges, `private, no-store`.
+  - Progress is saved debounced and flushed on page hide.
+  - Reader URLs are keyed by library item, never by product.
+- **Reviews.**
+  - Only current owners can review; `is_verified_purchase` is set for purchases only.
+  - New and edited reviews go to `pending` while `reviews.requireModeration` is on.
+  - Product rating aggregates count approved reviews only.
+- **Recommendations.** Unowned titles from the reader's owned categories (featured first), falling back to featured titles. No popularity numbers are shown.
+- **Demo library.** `seed:demo` gives the demo reader six titles as `admin_grant` items, not fake purchases, so no orders or revenue are invented.

@@ -27,6 +27,7 @@ import { Avatar } from "@/components/ui/Feedback";
 import { Badge } from "@/components/ui/Badge";
 import { AnchorNav } from "./AnchorNav";
 import { FrequentlyBought } from "./FrequentlyBought";
+import { ReviewDialog } from "@/components/account/ReviewDialog";
 import { MobilePurchaseBar } from "./MobilePurchaseBar";
 import { PreviewReader } from "./PreviewReader";
 import { ProductGallery } from "./ProductGallery";
@@ -44,6 +45,8 @@ type Props = {
   refundWindowDays: number;
   baseUrl: string;
   sectionCrumb: { label: string; href: string };
+  /** Owner context: reader link and the viewer's own review (null when not owned). */
+  owner?: { readHref: string; review: { rating: number; title: string | null; body: string; status: string } | null } | null;
 };
 
 const dateFmt = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" });
@@ -71,7 +74,7 @@ function formatBytes(n: number) {
  * ProductDetailTemplate(state): Normal · Discounted · Purchased · Unavailable · Updated
  * (master §52) — composition from the Cozy Digital Bookstore Product Page sheet.
  */
-export function ProductDetailTemplate({ product, state, viewer, related, fbt, reviews, refundWindowDays, baseUrl, sectionCrumb }: Props) {
+export function ProductDetailTemplate({ product, state, viewer, related, fbt, reviews, refundWindowDays, baseUrl, sectionCrumb, owner = null }: Props) {
   const isBundle = product.type === "bundle";
   const details: { icon: LucideIcon; label: string; value: string | null }[] = [
     { icon: FileText, label: "Pages", value: product.version?.pageCount ? String(product.version.pageCount) : null },
@@ -151,7 +154,7 @@ export function ProductDetailTemplate({ product, state, viewer, related, fbt, re
         </div>
         <div className="lg:col-span-3">
           <div className="lg:sticky lg:top-24">
-            <PurchasePanel product={product} state={state} signedIn={viewer.signedIn} wishlisted={viewer.wishlist.has(product.id)} refundWindowDays={refundWindowDays} />
+            <PurchasePanel product={product} state={state} readHref={owner?.readHref ?? null} signedIn={viewer.signedIn} wishlisted={viewer.wishlist.has(product.id)} refundWindowDays={refundWindowDays} />
           </div>
         </div>
       </section>
@@ -283,6 +286,12 @@ export function ProductDetailTemplate({ product, state, viewer, related, fbt, re
             </h2>
             {product.rating ? <Rating average={product.rating.average} count={product.rating.count} size="md" /> : null}
           </div>
+          {owner ? (
+            <div className="flex items-center gap-3">
+              {owner.review?.status === "pending" ? <span className="text-caption text-fg-muted">Your review is awaiting moderation</span> : null}
+              <ReviewDialog productId={product.id} productTitle={product.title} existing={owner.review} />
+            </div>
+          ) : null}
         </div>
         {reviews.length ? (
           <ul className="grid gap-4 md:grid-cols-3">

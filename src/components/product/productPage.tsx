@@ -9,6 +9,7 @@ import {
   type ProductTypeKey,
 } from "@/modules/catalog";
 import { getCurrentUser } from "@/modules/auth";
+import { myReviewFor, recordView } from "@/modules/engagement";
 import { ownership } from "@/modules/entitlements";
 import { getDisplayCurrency } from "@/modules/pricing";
 import { getSetting } from "@/modules/settings";
@@ -57,6 +58,9 @@ export async function ProductPage({ type, slug }: { type: ProductTypeKey; slug: 
   ]);
   const viewer = await viewerState([product.id, ...related.map((r) => r.id), ...fbt.items.map((f) => f.id), ...(product.bundle?.items.map((i) => i.id) ?? [])]);
 
+  const [ownReview] = await Promise.all([own.owned && user ? myReviewFor(user.id, product.id) : Promise.resolve(null), user ? recordView(user.id, product.id) : Promise.resolve()]);
+  const owner = own.owned ? { readHref: `/read/${own.libraryItemId}`, review: ownReview } : null;
+
   const state: PurchaseState = own.owned ? (own.updateAvailable ? "updated" : "owned") : product.price ? "available" : "unavailable";
 
   const jsonLd = {
@@ -95,6 +99,7 @@ export async function ProductPage({ type, slug }: { type: ProductTypeKey; slug: 
         refundWindowDays={refundWindowDays}
         baseUrl={baseUrl()}
         sectionCrumb={SECTION[type]}
+        owner={owner}
       />
     </>
   );

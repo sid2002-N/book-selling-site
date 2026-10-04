@@ -13,6 +13,8 @@ export type PurchaseState = "available" | "owned" | "updated" | "unavailable";
 type PurchasePanelProps = {
   product: ProductDetail;
   state: PurchaseState;
+  /** Reader link for owners (keyed by library item, never by product). */
+  readHref: string | null;
   signedIn: boolean;
   wishlisted: boolean;
   refundWindowDays: number;
@@ -26,7 +28,7 @@ const trust: { icon: LucideIcon; title: string; body: string }[] = [
 ];
 
 /** Sticky purchase card (DESIGN_SYSTEM §21). One component covers every product-page state. */
-export function PurchasePanel({ product, state, signedIn, wishlisted, refundWindowDays }: PurchasePanelProps) {
+export function PurchasePanel({ product, state, readHref, signedIn, wishlisted, refundWindowDays }: PurchasePanelProps) {
   const price = product.price;
   return (
     <div className="flex flex-col gap-5 rounded-xl border border-line bg-surface p-6 shadow-2">
@@ -41,11 +43,13 @@ export function PurchasePanel({ product, state, signedIn, wishlisted, refundWind
               ? `Version ${product.version?.version} is out. Download the latest file from your library at no cost.`
               : "You already own this. Read it in the KRM reader or download it any time."}
           </p>
-          <Button asChild size="lg" block>
-            <Link href={`/read/${product.id}`}>
-              <BookOpen /> Read now
-            </Link>
-          </Button>
+          {readHref ? (
+            <Button asChild size="lg" block>
+              <Link href={readHref}>
+                <BookOpen /> Read now
+              </Link>
+            </Button>
+          ) : null}
           <Button asChild variant="secondary" block>
             <Link href="/account/downloads">
               <Download /> {state === "updated" ? "Download latest version" : "Go to Downloads"}
