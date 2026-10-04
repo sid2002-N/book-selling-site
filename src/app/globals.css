@@ -1,0 +1,278 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+@custom-variant touch (@media (pointer: coarse));
+
+/*
+ * Tailwind theme = KRM tokens only. Default palettes, radii and shadows are reset so
+ * arbitrary brand values cannot creep in (docs/CODE_STYLE.md §5).
+ * Spacing keeps Tailwind's 4px base unit (DESIGN_SYSTEM §5).
+ */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+
+  --color-canvas: var(--bg);
+  --color-canvas-subtle: var(--bg-subtle);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-elevated);
+  --color-glass: var(--surface-glass);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+
+  --color-fg: var(--text);
+  --color-fg-secondary: var(--text-secondary);
+  --color-fg-muted: var(--text-muted);
+  --color-fg-on-ink: var(--text-on-dark);
+
+  --color-ink: var(--ink);
+  --color-ink-hover: var(--ink-hover);
+  --color-ink-soft: var(--ink-soft);
+
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-terracotta: var(--accent-secondary);
+  --color-terracotta-soft: var(--accent-secondary-soft);
+  --color-plum: var(--plum);
+  --color-plum-soft: var(--plum-soft);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-error: var(--error);
+  --color-error-soft: var(--error-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-focus: var(--focus-ring);
+  --color-scrim: var(--scrim);
+  --color-scrim-reader: var(--scrim-reader);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+
+  --font-serif: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Type scale (DESIGN_SYSTEM §4) */
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.2;
+  --text-micro--letter-spacing: 0.04em;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.2;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.5;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+  --text-h4: 1.125rem;
+  --text-h4--line-height: 1.35;
+  --text-h3: 1.375rem;
+  --text-h3--line-height: 1.3;
+  --text-h2: clamp(1.5rem, 1.2rem + 1.2vw, 1.875rem);
+  --text-h2--line-height: 1.2;
+  --text-h1: clamp(2rem, 1.5rem + 2vw, 2.5rem);
+  --text-h1--line-height: 1.1;
+  --text-display: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+  --text-display--line-height: 1.05;
+  --text-price: clamp(1.5rem, 1.3rem + 0.8vw, 2rem);
+  --text-price--line-height: 1.1;
+
+  /* Radius (DESIGN_SYSTEM §6) — limited system */
+  --radius-*: initial;
+  --radius-cover: 0.375rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* Shadows (§7) — low-elevation, warm-tinted */
+  --shadow-*: initial;
+  --shadow-1: 0 1px 2px rgb(60 40 20 / 0.06);
+  --shadow-2: 0 6px 18px rgb(60 40 20 / 0.1);
+  --shadow-3: 0 18px 48px rgb(60 40 20 / 0.16);
+
+  --ease-out-soft: var(--ease-out-soft);
+
+  --animate-fade-in: fade-in var(--motion-normal) var(--ease-out-soft);
+  --animate-rise-in: rise-in var(--motion-normal) var(--ease-out-soft);
+  --animate-sheet-up: sheet-up var(--motion-slow) var(--ease-out-soft);
+  --animate-shimmer: shimmer 1.6s linear infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(0.5rem); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes sheet-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+
+  /* Breakpoints (§14): sm mobile ≥375 · md tablet ≥640 · lg laptop · xl desktop · 2xl large */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 23.4375rem;
+  --breakpoint-md: 40rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--text);
+  }
+
+  /* Inputs ≥16px on touch devices prevent iOS zoom. */
+  @media (pointer: coarse) {
+    input,
+    select,
+    textarea {
+      font-size: max(16px, 1em);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Liquid glass — secondary material for floating/overlay surfaces only (§8). */
+@utility glass {
+  background-color: var(--surface-glass);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border: 1px solid rgb(255 255 255 / 0.55);
+  box-shadow: var(--shadow-2);
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: var(--surface-elevated);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--surface-elevated);
+    backdrop-filter: none;
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility text-balance-pretty {
+  text-wrap: pretty;
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility duration-fast {
+  transition-duration: var(--motion-fast);
+}
+@utility duration-normal {
+  transition-duration: var(--motion-normal);
+}
+@utility duration-slow {
+  transition-duration: var(--motion-slow);
+}
+
+@utility bg-shimmer {
+  background-image: linear-gradient(90deg, var(--bg-subtle) 25%, var(--surface) 50%, var(--bg-subtle) 75%);
+  background-size: 200% 100%;
+}
+
+@utility bg-shelf {
+  background-image: linear-gradient(180deg, var(--shelf-wood) 0%, var(--shelf-wood-dark) 100%);
+}
+
+@utility cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 18rem;
+}
+
+@utility writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+@utility perspective-shelf {
+  perspective: 900px;
+}
+
+
+/* Generated cover typography scales with the cover's own width (container query units). */
+@utility cover-title {
+  font-size: clamp(0.8125rem, 11cqw, 1.5rem);
+  overflow-wrap: normal;
+  word-break: normal;
+}
+@utility cover-pad {
+  padding: clamp(0.625rem, 9cqw, 1.25rem);
+}

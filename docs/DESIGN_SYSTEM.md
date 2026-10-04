@@ -256,3 +256,15 @@ Semantic landmarks/headings · keyboard everything · visible focus · AA contra
 | Show real, server data | Hardcode "10K+ students" |
 | Provide loading/empty/error for every screen | Ship blank states |
 | Use glass on overlays | Glass on every card |
+
+## 24. Implementation notes (M1, 4 Oct 2026)
+
+- **Tokens:** `src/styles/tokens.css` (CSS variables) → Tailwind theme in `src/app/globals.css` (`@theme inline`). Default Tailwind colours, radii, shadows and breakpoints are reset, so only KRM tokens exist.
+- **Utility names:** `bg-canvas`/`bg-canvas-subtle`/`bg-surface`/`bg-surface-raised`, `border-line`/`border-line-strong`, `text-fg`/`text-fg-secondary`/`text-fg-muted`/`text-fg-on-ink`, `bg-ink`, `accent`, `terracotta`, `plum`, status colours, `chart-1…7`. Type: `text-display|h1|h2|h3|h4|body-lg|body|body-sm|caption|label|micro|price`. Radius: `rounded-cover|sm|md|lg|xl|full`. Shadow: `shadow-1|2|3`. Motion: `duration-fast|normal|slow`, `ease-out-soft`, `animate-fade-in|rise-in|sheet-up|shimmer`.
+- **Spacing:** Tailwind's 4px base unit (`p-1` = 4px … `p-32` = 128px) implements §5; the §5 named steps map to `1, 2, 3, 4, 6, 8, 12, 16, 24, 32`.
+- **Breakpoints:** `sm` ≥375 · `md` ≥640 · `lg` ≥1024 · `xl` ≥1280 · `2xl` ≥1536 (min-width, matching §14 names). `touch:` variant = `(pointer: coarse)`.
+- **Fonts:** Fraunces (display/headings, `opsz` + `SOFT` axes) and Inter (UI), via `next/font`.
+- **Glass:** `glass` utility with solid fallbacks for no `backdrop-filter` and `prefers-reduced-transparency`.
+- **Library:** `src/components/library/` — `Shelf` (greedy row packing from deterministic spine widths, `content-visibility` rows, list-view fallback, pull-out dialog/sheet), `BookSpine`, `BookCover` (generated typographic cover until real cover assets exist). Geometry/contrast helpers in `src/lib/spine.ts`.
+- **System states:** `SystemState` (`src/components/system/`) covers every §13 variant; illustration slots are calm motif compositions until final scene art is commissioned (OQ-12).
+- **Dev gallery:** `/dev/components` (not available in production).
