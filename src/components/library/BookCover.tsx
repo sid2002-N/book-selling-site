@@ -10,6 +10,8 @@ type BookCoverProps = {
   typeLabel?: string;
   sizes?: string;
   priority?: boolean;
+  /** Thumbnail mode for tiny renders: colour, spine and initial only — no unreadable text. */
+  compact?: boolean;
   className?: string;
 };
 
@@ -25,6 +27,7 @@ export function BookCover({
   typeLabel,
   sizes = "(min-width: 1024px) 220px, 45vw",
   priority,
+  compact,
   className,
 }: BookCoverProps) {
   const base = cn("@container relative aspect-3/4 w-full overflow-hidden rounded-cover shadow-2", className);
@@ -39,6 +42,17 @@ export function BookCover({
 
   const background = spineColor && isValidHex(spineColor) ? spineColor : fallbackSpineColor(id);
   const color = spineTextColor(background);
+  if (compact) {
+    return (
+      <div className={base} style={{ backgroundColor: background, color }} role="img" aria-label={`Cover of ${title}`}>
+        <div aria-hidden className="absolute inset-y-0 left-0 w-1.5 bg-linear-to-r from-ink/35 to-transparent" />
+        <span aria-hidden className="absolute inset-0 flex items-center justify-center font-serif text-body-sm opacity-90">
+          {title.trim().charAt(0)}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className={base} style={{ backgroundColor: background, color }} role="img" aria-label={`Cover of ${title}`}>
       <div aria-hidden className="absolute inset-y-0 left-0 w-3 bg-linear-to-r from-ink/35 to-transparent" />

@@ -109,7 +109,7 @@ export function Shelf({ books, label, empty, allowListView = true, className }: 
               <li key={book.id}>
                 <Link href={book.href} className="flex items-center gap-4 px-4 py-3 hover:bg-surface-raised">
                   <div className="w-10 shrink-0">
-                    <BookCover id={book.id} title={book.title} coverUrl={book.coverUrl} spineColor={book.spineColor} sizes="40px" />
+                    <BookCover id={book.id} title={book.title} coverUrl={book.coverUrl} spineColor={book.spineColor} sizes="40px" compact />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-body-sm font-medium text-fg">{book.title}</p>

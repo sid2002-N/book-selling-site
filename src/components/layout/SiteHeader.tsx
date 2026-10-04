@@ -4,6 +4,7 @@ import { Bell, Heart, Menu as MenuIcon, Search, ShoppingBag } from "lucide-react
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CommandSearch } from "@/components/catalog/CommandSearch";
 import { primaryNav, compactNav, type NavLink } from "@/config/navigation";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
@@ -17,7 +18,6 @@ type SiteHeaderProps = {
   user: HeaderUser;
   cartCount?: number;
   variant?: "default" | "compact";
-  onOpenSearch?: () => void;
 };
 
 function isActive(pathname: string, href: string) {
@@ -28,9 +28,24 @@ function isActive(pathname: string, href: string) {
  * Storefront header (DESIGN_SYSTEM §12.1): light by default, compact + glass once scrolled.
  * On mobile the nav moves to a drawer and the bottom bar; search, wishlist, cart stay on top.
  */
-export function SiteHeader({ user, cartCount = 0, variant = "default", onOpenSearch }: SiteHeaderProps) {
+export function SiteHeader({ user, cartCount = 0, variant = "default" }: SiteHeaderProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const onOpenSearch = () => setSearchOpen(true);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const typing = target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
+      if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || (e.key === "/" && !typing)) {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
   const links: NavLink[] = variant === "compact" ? compactNav : primaryNav;
 
   useEffect(() => {
@@ -39,8 +54,6 @@ export function SiteHeader({ user, cartCount = 0, variant = "default", onOpenSea
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const searchHref = "/search";
 
   return (
     <header
@@ -76,30 +89,16 @@ export function SiteHeader({ user, cartCount = 0, variant = "default", onOpenSea
         </nav>
 
         <div className="ml-auto flex items-center gap-1 md:gap-2">
-          {onOpenSearch ? (
-            <button
-              type="button"
-              onClick={onOpenSearch}
-              className="hidden h-10 w-72 items-center gap-2 rounded-full border border-line bg-surface/80 px-4 text-left text-body-sm whitespace-nowrap text-fg-muted hover:border-line-strong xl:flex"
-            >
-              <Search className="size-4" aria-hidden />
-              <span className="flex-1 truncate">Search books, guides, topics…</span>
-              <kbd className="rounded-sm border border-line px-1.5 text-micro text-fg-muted">/</kbd>
-            </button>
-          ) : (
-            <Link
-              href={searchHref}
-              className="hidden h-10 w-72 items-center gap-2 rounded-full border border-line bg-surface/80 px-4 text-body-sm whitespace-nowrap text-fg-muted hover:border-line-strong xl:flex"
-            >
-              <Search className="size-4" aria-hidden />
-              Search books, guides, topics…
-            </Link>
-          )}
-          <HeaderIcon
-            label="Search"
-            className="xl:hidden"
-            {...(onOpenSearch ? { onClick: onOpenSearch } : { href: searchHref })}
+          <button
+            type="button"
+            onClick={onOpenSearch}
+            className="hidden h-10 w-72 items-center gap-2 rounded-full border border-line bg-surface/80 px-4 text-left text-body-sm whitespace-nowrap text-fg-muted hover:border-line-strong xl:flex"
           >
+            <Search className="size-4" aria-hidden />
+            <span className="flex-1 truncate">Search books, guides, topics…</span>
+            <kbd className="rounded-sm border border-line px-1.5 text-micro text-fg-muted">/</kbd>
+          </button>
+          <HeaderIcon label="Search" className="xl:hidden" onClick={onOpenSearch}>
             <Search />
           </HeaderIcon>
           <HeaderIcon label="Wishlist" href="/account/wishlist" className="hidden sm:flex">
@@ -124,6 +123,7 @@ export function SiteHeader({ user, cartCount = 0, variant = "default", onOpenSea
           )}
         </div>
       </div>
+      <CommandSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
   );
 }

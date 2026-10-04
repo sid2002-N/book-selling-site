@@ -1329,6 +1329,20 @@ model EmailLog {
   @@map("email_log")
 }
 
+/// Search terms for Search Analytics (F3). No PII beyond the optional user id.
+model SearchQuery {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  term         String
+  normalized   String
+  resultsCount Int      @map("results_count")
+  userId       String?  @map("user_id") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@index([normalized, createdAt])
+  @@index([createdAt])
+  @@map("search_query")
+}
+
 model Setting {
   key         String   @id
   value       Json

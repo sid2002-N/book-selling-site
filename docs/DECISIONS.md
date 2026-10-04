@@ -32,6 +32,10 @@ Status legend: **Accepted** (stated in your source prompts) · **Proposed** (age
 | DEC-026 | Package manager | **Accepted** (4 Oct 2026) | pnpm | |
 | DEC-028 | Tax-inclusive pricing | **Accepted** (4 Oct 2026) | Catalogue prices include tax; `order.total = subtotal − discount` (DB CHECK) and tax is reported as the contained amount from configurable `tax_rate` rows | Matches Indian GST display norms; no surprise charges at checkout; rates stay configurable (OQ-2) |
 | DEC-029 | ORM version | **Accepted** (4 Oct 2026) | Prisma 7.10 (stable) with `@prisma/adapter-pg`; npm `latest` currently points at an 8.0 release candidate, which is avoided | Stability |
+| DEC-030 | Display currency | **Accepted** (4 Oct 2026) | Explicit choice (cookie `krm_currency`) → visitor country header (IN → INR, else USD) → store default; prices are explicit per-currency rows | OQ-7/OQ-8; no FX drift |
+| DEC-031 | Storage keys & local dev | **Accepted** (4 Oct 2026) | `StoragePort` with local (`./.storage`, public bucket served at `/media/*`) and R2 drivers; random 128-bit object keys | Paid files never reachable by URL; dev works offline |
+| DEC-032 | Newsletter v1 | **Accepted** (4 Oct 2026) | Single opt-in in v1 (recorded as subscribed); double opt-in moves to the marketing-extras milestone | Keeps the homepage band functional now without a half-built confirmation flow |
+| DEC-033 | "Frequently bought together" | **Accepted** (4 Oct 2026) | Real co-purchases from paid orders when available; otherwise same-bundle/related items labelled "Pairs Well With" | Never implies purchase data that doesn't exist (C6) |
 | DEC-027 | Release slicing | **Accepted** (4 Oct 2026) | First slice = Storefront MVP (master phases 1–5 + minimum admin) | OQ-16 |
 
 *Template for new decisions:*
