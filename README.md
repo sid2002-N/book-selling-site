@@ -27,4 +27,4 @@ Razorpay takes INR and Stripe takes USD; the customer's currency (footer switche
 | `STRIPE_WEBHOOK_SECRET` | `stripe listen --forward-to localhost:3000/api/v1/webhooks/stripe` locally, or a Dashboard endpoint in deployed environments |
 | `CRON_SECRET` | Any long random string. Vercel Cron sends it to `/api/v1/internal/payments/reconcile` (see `vercel.json`) |
 
-The reconcile cron in `vercel.json` runs every 15 minutes, which needs a paid Vercel plan. On Hobby, change it to a daily schedule. The status page also re-checks the provider while a customer waits.
+The reconcile cron in `vercel.json` runs daily (03:00 UTC), which the Hobby plan allows. On Pro you can tighten it to `*/15 * * * *`. Customers waiting on the status page don't depend on it: that page re-checks the provider directly.
