@@ -126,3 +126,15 @@ DB migrate:  pnpm db:migrate     Seed demo: pnpm db:seed:demo
 | Amount/currency mismatch | ✅ | ✅ |
 | Partial & full refund | ✅ | ✅ |
 | Dispute opened | ✅ | ✅ |
+
+## 10. Commands (as implemented)
+
+```text
+pnpm test               # unit + component (jsdom)
+pnpm test:integration   # services against the test database (krm_lib_test)
+pnpm db:test:prepare    # apply migrations to the test database
+pnpm test:e2e           # Playwright (desktop + mobile projects)
+pnpm lint · pnpm typecheck · pnpm build
+pnpm db:migrate:dev · pnpm db:seed (minimal) · pnpm db:seed:demo
+```
+Integration tests mock `next/headers` with an in-memory cookie jar (`tests/helpers`), truncate all tables between cases, and refuse to run against a database whose name lacks `_test`.

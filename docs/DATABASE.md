@@ -206,3 +206,15 @@ Record `created_by/updated_by` on admin-managed content tables where useful. **A
 
 ## 12. Seed Data
 Provide `seed:demo` (clearly labeled **DEMO DATA**, never production): sample categories (Productivity, Self Improvement, Career, Business, Finance, Student, Health, Lifestyle, Tech & Design — taken from the mockups), a handful of demo products of each type with generated covers (title + `spine_color`), demo collections/bundles, demo admin users per role, demo coupons, and demo orders. **No fake testimonials, reviews presented as real, or fake customer statistics** (master §77). `seed:minimal` creates only roles/permissions, settings defaults and legal placeholders — safe for production.
+
+## 13. Implementation notes (M2, 4 Oct 2026)
+
+Schema: `prisma/schema.prisma`. Hand-written SQL: `prisma/migrations/*_init` (extensions `citext`, `pg_trgm`; sequences `order_number_seq`, `refund_number_seq`, `invoice_number_seq`) and `*_integrity_and_search` (CHECK constraints, append-only `audit_log` trigger, `product.search_vector` trigger + GIN index). Prisma does not manage CHECKs/triggers, so later migrations never drop them; `prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma` must stay empty.
+
+Deliberate simplifications of §3 that keep the same guarantees without partial indexes:
+- **One current version per product** → `product.current_version_id` (unique FK) instead of `product_version.is_current` + partial unique index.
+- **One active cart per user** → `cart.user_id` unique; carts are emptied on checkout instead of being marked `converted`; guest carts are merged and deleted on login.
+- **Order total** → tax-inclusive pricing (DEC-028): `total_minor = subtotal_minor − discount_minor`.
+- **Session** adds `two_factor_passed` and `absolute_expires_at` (idle + absolute expiry, SECURITY §1).
+- **Refund numbers** use `RFD-####` from `refund_number_seq`; invoices `INV-######`.
+- `product.rating_avg` / `rating_count` are cached aggregates refreshed by the reviews service.

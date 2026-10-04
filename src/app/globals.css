@@ -276,3 +276,10 @@
 @utility cover-pad {
   padding: clamp(0.625rem, 9cqw, 1.25rem);
 }
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

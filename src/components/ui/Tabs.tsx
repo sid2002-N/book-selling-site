@@ -10,7 +10,7 @@ export const Tabs = TabsPrimitive.Root;
 export function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
-      className={cn("flex max-w-full gap-2 overflow-x-auto pb-1 [scrollbar-width:none]", className)}
+      className={cn("flex max-w-full gap-2 overflow-x-auto pb-1 scrollbar-none", className)}
       {...props}
     />
   );

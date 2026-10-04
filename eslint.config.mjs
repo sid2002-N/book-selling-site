@@ -10,6 +10,7 @@ const eslintConfig = defineConfig([
     plugins: { import: importPlugin },
     rules: {
       "import/no-cycle": "error",
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "no-console": ["error", { allow: ["warn", "error"] }],
     },
   },
@@ -28,6 +29,11 @@ const eslintConfig = defineConfig([
         },
       ],
     },
+  },
+  {
+    // CLI scripts and seeds report progress on stdout.
+    files: ["prisma/**/*.ts", "scripts/**/*.{ts,mjs}"],
+    rules: { "no-console": "off" },
   },
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "UIUX/**", "prompt-doc/**", "src/generated/**"]),
 ]);
