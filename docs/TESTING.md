@@ -138,3 +138,5 @@ pnpm lint · pnpm typecheck · pnpm build
 pnpm db:migrate:dev · pnpm db:seed (minimal) · pnpm db:seed:demo
 ```
 Integration tests mock `next/headers` with an in-memory cookie jar (`tests/helpers`), truncate all tables between cases, and refuse to run against a database whose name lacks `_test`.
+
+E2E runs against demo data (`pnpm db:seed:demo`). Locally it builds nothing itself: run `pnpm build` first, then `E2E_READER_PASSWORD=… pnpm test:e2e` (it starts `next start` on port 3100). To test a deployment, set `E2E_BASE_URL=https://<deployment>`; the demo reader must exist there. Covered flows: browsing and preview never request a paid file; guest checkout reaches the payment step with no faked payment, and a tampered order is rejected; account pages redirect to sign-in; branded 404; claiming a free resource puts it on the shelf; the reader resumes on the last page; a download for someone else's item is refused; an owned title downloads a real file.

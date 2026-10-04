@@ -7,7 +7,7 @@ export default async function AccountLayout({ children }: LayoutProps<"/account"
   await requireUserPage(path);
   return (
     <div className="container-page grid gap-8 py-6 md:py-10 lg:grid-cols-12">
-      <aside className="lg:col-span-3 xl:col-span-2">
+      <aside className="min-w-0 lg:col-span-3 xl:col-span-2">
         <div className="lg:sticky lg:top-24">
           <AccountSidebar />
         </div>

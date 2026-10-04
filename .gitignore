@@ -50,3 +50,6 @@ next-env.d.ts
 
 # generated
 /src/generated
+/tests/e2e/.auth
+/test-results
+/playwright-report
