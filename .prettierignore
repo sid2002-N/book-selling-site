@@ -1,0 +1,8 @@
+UIUX
+prompt-doc
+docs
+pnpm-lock.yaml
+.next
+node_modules
+playwright-report
+test-results

@@ -1,0 +1,78 @@
+/*
+ * KRM.lib design tokens — the only source of colour, type, radius, shadow and motion values.
+ * Starting values from docs/DESIGN_SYSTEM.md §3–8, calibrated against the UIUX/ sheets.
+ * Components consume these through the Tailwind theme in src/app/globals.css.
+ */
+:root {
+  /* Surfaces */
+  --bg: #fbf3e8;
+  --bg-subtle: #f6eadb;
+  --surface: #fff9f1;
+  --surface-elevated: #fffdf9;
+  --surface-glass: rgb(255 249 240 / 0.72);
+  --border: #ebdcc8;
+  --border-strong: #d9c4a8;
+
+  /* Text */
+  --text: #2a1d16;
+  --text-secondary: #5e4a3c;
+  --text-muted: #8c7767;
+  --text-on-dark: #f8eedf;
+
+  /* Ink (espresso) — primary buttons, footer, admin sidebar */
+  --ink: #2b1e18;
+  --ink-hover: #3d2c23;
+  --ink-soft: #4a382e;
+
+  /* Accents: amber = storefront accent, plum = secondary (C1) */
+  --accent: #d98a2b;
+  --accent-strong: #a8641a;
+  --accent-soft: #fbe6c6;
+  --accent-secondary: #c4562f;
+  --accent-secondary-soft: #f7dfd3;
+  --plum: #6b2a3a;
+  --plum-soft: #f1dde0;
+
+  /* Status (always paired with icon + text) */
+  --success: #4f7f4a;
+  --success-soft: #e3eedc;
+  --warning: #b7791f;
+  --warning-soft: #fbebc8;
+  --error: #b3392f;
+  --error-soft: #f8deda;
+  --info: #6b5b4e;
+  --info-soft: #efe6da;
+
+  --focus-ring: #d98a2b;
+
+  /* Scrims */
+  --scrim: rgb(42 29 22 / 0.45);
+  --scrim-reader: rgb(20 13 10 / 0.6);
+
+  /* Warm categorical chart palette (§3.5) */
+  --chart-1: #d98a2b;
+  --chart-2: #c4562f;
+  --chart-3: #6b2a3a;
+  --chart-4: #4f7f4a;
+  --chart-5: #b89b72;
+  --chart-6: #7a6a5c;
+  --chart-7: #3f5e5a;
+
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-normal: 220ms;
+  --motion-slow: 420ms;
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Layout */
+  --content-max: 90rem;
+  --header-height: 4.5rem;
+  --bottom-nav-height: 4rem;
+}
+
+/* Library shelf (signature component, DESIGN_SYSTEM §18) */
+:root {
+  --shelf-wood: #8a5a35;
+  --shelf-wood-dark: #5e3b22;
+  --shelf-back: #f1e2cc;
+}
