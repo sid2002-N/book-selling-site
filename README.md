@@ -28,3 +28,22 @@ Razorpay takes INR and Stripe takes USD; the customer's currency (footer switche
 | `CRON_SECRET` | Any long random string. Vercel Cron sends it to `/api/v1/internal/payments/reconcile` (see `vercel.json`) |
 
 The reconcile cron in `vercel.json` runs daily (03:00 UTC), which the Hobby plan allows. On Pro you can tighten it to `*/15 * * * *`. Customers waiting on the status page don't depend on it: that page re-checks the provider directly.
+
+## Troubleshooting a deployment
+
+Open `/api/health` on the deployed site. It reports, by name only and never with values:
+
+- `database.state`: one of
+  - `missing`: no `DATABASE_URL`. Every page then shows a "Setup required" page instead of a 500.
+  - `unreachable`: wrong URL or SSL setting, or the database is paused.
+  - `not_migrated`: run `pnpm db:migrate`.
+  - `empty`: run `pnpm db:seed:demo` or add products.
+  - `ok`
+- `secretsMissing`: which of `AUTH_SECRET`, `ENCRYPTION_KEY`, `DOWNLOAD_SIGNING_SECRET` and `CRON_SECRET` are unset.
+- `storage.ready`: whether file storage works on this host. Vercel needs `STORAGE_DRIVER=r2`.
+- `email` and `payments`: which providers are configured.
+
+To run migrations against a hosted database from your machine, set the variable and run the scripts:
+
+- PowerShell: `$env:DATABASE_URL="…"; pnpm db:migrate; pnpm db:seed:demo`
+- bash: `DATABASE_URL=… pnpm db:migrate && pnpm db:seed:demo`
