@@ -4,6 +4,6 @@
  */
 export const ILLUSTRATIONS: { hero: string; newsletter: string | null; footer: string | null } = {
   hero: "/illustrations/hero-study.webp",
-  newsletter: null,
-  footer: null,
+  newsletter: "/illustrations/newsletter-banner.webp",
+  footer: "/illustrations/footer-scene.webp",
 };

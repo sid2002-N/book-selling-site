@@ -145,8 +145,8 @@ function Section({ section, data, viewer }: { section: HomepageSection; data: Da
               <Image src={image} alt="" fill sizes="100vw" className="object-cover" />
               {/* At lg+ the section is exactly 3:1 like the art, so overlays line up. */}
               <div className="absolute inset-0 hidden lg:block">
-                <Glow at={{ left: "80%", top: "4%", width: "18%", height: "50%" }} />
-                <Steam at={{ left: "84%", top: "47%", width: "4.5%", height: "21%" }} />
+                <Glow at={{ left: "80%", top: "2%", width: "17%", height: "55%" }} />
+                <Steam at={{ left: "83%", top: "48%", width: "5%", height: "21%" }} />
               </div>
               <div className="absolute top-1/2 left-1/2 h-3/4 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-full bg-canvas opacity-70 blur-3xl" />
             </div>

@@ -56,9 +56,9 @@ export function SiteFooter({
           <Image src={scene} alt="" aria-hidden fill sizes="100vw" className="object-cover" />
           {/* At lg+ the band is exactly 3:1 like the art, so the lantern, mug and window line up. */}
           <div aria-hidden className="absolute inset-0 hidden lg:block">
-            <Glow kind="flame" at={{ left: "20%", top: "52%", width: "7%", height: "22%" }} />
-            <Glow at={{ left: "78%", top: "0%", width: "20%", height: "55%" }} />
-            <Steam at={{ left: "81.5%", top: "44%", width: "4.5%", height: "20%" }} />
+            <Glow kind="flame" at={{ left: "20%", top: "53%", width: "6.5%", height: "21%" }} />
+            <Glow at={{ left: "80%", top: "0%", width: "18%", height: "55%" }} />
+            <Steam at={{ left: "81%", top: "43%", width: "4.5%", height: "21%" }} />
           </div>
           <blockquote className="relative px-6 text-center font-serif text-h2 text-fg-on-ink italic">“{quote}”</blockquote>
         </div>
