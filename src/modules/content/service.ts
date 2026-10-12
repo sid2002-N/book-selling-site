@@ -6,7 +6,16 @@ const link = z.object({ label: z.string(), href: z.string() });
 
 /** Section configs are validated on read so a bad CMS edit can't break the page. */
 export const sectionSchemas = {
-  hero: z.object({ eyebrow: z.string(), title: z.string(), highlight: z.string().optional(), body: z.string(), primary: link, secondary: link.optional() }),
+  hero: z.object({
+    eyebrow: z.string(),
+    title: z.string(),
+    highlight: z.string().optional(),
+    body: z.string(),
+    primary: link,
+    secondary: link.optional(),
+    /** Site-relative path to the hero artwork (3:2). Defaults to the house illustration. */
+    image: z.string().regex(/^\/[\w\-./]+$/).optional(),
+  }),
   formats: z.object({}).passthrough(),
   shelf: z.object({ eyebrow: z.string().optional(), title: z.string(), limit: z.number().int().min(4).max(60).default(28) }),
   product_rail: z.object({
@@ -24,7 +33,13 @@ export const sectionSchemas = {
     points: z.array(z.object({ title: z.string(), body: z.string() })),
     cta: link.optional(),
   }),
-  newsletter: z.object({ eyebrow: z.string().optional(), title: z.string(), body: z.string() }),
+  newsletter: z.object({
+    eyebrow: z.string().optional(),
+    title: z.string(),
+    body: z.string(),
+    /** Site-relative path to a 3:1 banner illustration behind the signup. */
+    image: z.string().regex(/^\/[\w\-./]+$/).optional(),
+  }),
 } as const;
 
 export type SectionType = keyof typeof sectionSchemas;

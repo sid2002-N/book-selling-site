@@ -116,6 +116,11 @@
   --animate-draw: draw 2.4s var(--ease-out-soft) both;
   --animate-node: node-pulse 3.2s ease-in-out infinite;
   --animate-float: float 7s ease-in-out infinite;
+  --animate-hero-settle: hero-settle 1.8s var(--ease-out-soft) both;
+  --animate-steam: steam 4.5s ease-in-out infinite;
+  --animate-glow: glow 9s ease-in-out infinite;
+  --animate-mote: mote 14s ease-in-out infinite;
+  --animate-flicker: flicker 2.6s ease-in-out infinite;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -152,6 +157,31 @@
   @keyframes node-pulse {
     0%, 100% { transform: scale(1); opacity: 0.9; }
     50% { transform: scale(1.35); opacity: 1; }
+  }
+  @keyframes hero-settle {
+    from { opacity: 0; transform: scale(1.06); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes steam {
+    0% { opacity: 0; transform: translateY(20%) scaleX(0.9); }
+    25% { opacity: 0.55; }
+    100% { opacity: 0; transform: translateY(-45%) scaleX(1.15); }
+  }
+  @keyframes glow {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.08); }
+  }
+  @keyframes flicker {
+    0%, 100% { opacity: 0.45; transform: scale(1); }
+    20% { opacity: 0.6; transform: scale(1.06); }
+    45% { opacity: 0.4; transform: scale(0.97); }
+    70% { opacity: 0.65; transform: scale(1.04); }
+  }
+  @keyframes mote {
+    0% { opacity: 0; transform: translate(0, 0); }
+    20% { opacity: 0.8; }
+    80% { opacity: 0.6; }
+    100% { opacity: 0; transform: translate(-2.5rem, 3rem); }
   }
   @keyframes float {
     0%, 100% { transform: translateY(0); }
@@ -383,3 +413,9 @@
   }
 }
 
+
+/* Soft edges for full-bleed illustrations: fade the left and top into the page. */
+@utility fade-edges-lt {
+  mask-image: linear-gradient(to right, transparent 0%, black 38%), linear-gradient(to bottom, transparent 0%, black 10%);
+  mask-composite: intersect;
+}

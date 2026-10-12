@@ -13,12 +13,16 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { NewsletterForm } from "@/components/catalog/NewsletterForm";
+import { HeroScene } from "@/components/home/HeroScene";
+import { Glow, Steam } from "@/components/illustration/Atmosphere";
+import { ILLUSTRATIONS } from "@/config/illustrations";
+import { cn } from "@/lib/cn";
 import { SectionHeader } from "@/components/catalog/SectionHeader";
 import { toShelfBooks } from "@/components/catalog/toShelfBooks";
 import { ProductRail, type ViewerState } from "@/components/commerce/ProductGrid";
-import { BookCover } from "@/components/library/BookCover";
 import { Shelf } from "@/components/library/Shelf";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -74,7 +78,7 @@ export default async function HomePage() {
 function Section({ section, data, viewer }: { section: HomepageSection; data: Data; viewer: ViewerState }) {
   switch (section.type) {
     case "hero":
-      return <Hero config={section.config} covers={data.shelf.slice(0, 3)} />;
+      return <Hero config={section.config} />;
     case "formats":
       return <Formats counts={data.counts} collections={data.bundles.length} />;
     case "shelf":
@@ -132,10 +136,22 @@ function Section({ section, data, viewer }: { section: HomepageSection; data: Da
       ) : null;
     case "why":
       return <Why config={section.config} />;
-    case "newsletter":
+    case "newsletter": {
+      const image = section.config.image ?? ILLUSTRATIONS.newsletter;
       return (
-        <section aria-labelledby="home-newsletter" className="bg-canvas-subtle">
-          <div className="container-page flex flex-col items-center gap-4 py-14 text-center md:py-20">
+        <section aria-labelledby="home-newsletter" className={cn("relative overflow-hidden bg-canvas-subtle", image && "flex items-center lg:aspect-3/1")}>
+          {image ? (
+            <div aria-hidden className="absolute inset-0">
+              <Image src={image} alt="" fill sizes="100vw" className="object-cover" />
+              {/* At lg+ the section is exactly 3:1 like the art, so overlays line up. */}
+              <div className="absolute inset-0 hidden lg:block">
+                <Glow at={{ left: "80%", top: "4%", width: "18%", height: "50%" }} />
+                <Steam at={{ left: "84%", top: "47%", width: "4.5%", height: "21%" }} />
+              </div>
+              <div className="absolute top-1/2 left-1/2 h-3/4 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-full bg-canvas opacity-70 blur-3xl" />
+            </div>
+          ) : null}
+          <div className="container-page relative flex flex-col items-center gap-4 py-14 text-center md:py-20">
             {section.config.eyebrow ? <p className="text-micro font-semibold tracking-widest text-accent-strong uppercase">{section.config.eyebrow}</p> : null}
             <h2 id="home-newsletter" className="text-h1">
               {section.config.title}
@@ -146,58 +162,67 @@ function Section({ section, data, viewer }: { section: HomepageSection; data: Da
           </div>
         </section>
       );
+    }
     default:
       return null;
   }
 }
 
-function Hero({ config, covers }: { config: Extract<HomepageSection, { type: "hero" }>["config"]; covers: ProductCard[] }) {
+/**
+ * Home hero. Desktop: the illustration fills the right side and its cream left edge carries
+ * the headline. Phones and tablets: headline first, full artwork below. Copy rises in gently.
+ */
+function Hero({ config }: { config: Extract<HomepageSection, { type: "hero" }>["config"] }) {
+  const image = config.image ?? ILLUSTRATIONS.hero;
+  const rise = (ms: number) => ({ className: "motion-safe:animate-word-rise", style: { animationDelay: `${ms}ms` } });
   return (
-    <section className="container-page grid items-center gap-12 pt-8 md:pt-14 lg:grid-cols-2">
-      <div className="flex flex-col items-start gap-6">
-        <p className="text-micro font-semibold tracking-widest text-accent-strong uppercase">{config.eyebrow}</p>
-        <h1 className="text-display text-fg">
-          {config.title} {config.highlight ? <span className="text-terracotta">{config.highlight}</span> : null}
-        </h1>
-        <p className="max-w-lg text-body-lg text-fg-secondary">{config.body}</p>
-        <div className="flex flex-wrap gap-3">
-          <Button asChild size="lg">
-            <Link href={config.primary.href}>
-              {config.primary.label} <ArrowRight />
-            </Link>
-          </Button>
-          {config.secondary ? (
-            <Button asChild size="lg" variant="secondary">
-              <Link href={config.secondary.href}>{config.secondary.label}</Link>
+    <section className="relative overflow-hidden">
+      <HeroScene src={image} className="fade-edges-lt absolute inset-y-0 right-0 hidden aspect-3/2 lg:block" />
+      <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 hidden w-2/3 bg-linear-to-r from-canvas via-canvas/85 to-transparent lg:block" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-24 bg-linear-to-t from-canvas to-transparent lg:block" />
+
+      <div className="container-page relative flex items-center pt-8 pb-6 md:pt-14 lg:min-h-160 lg:py-16">
+        <div className="flex max-w-xl flex-col items-start gap-6">
+          <p {...rise(0)} className={`${rise(0).className} text-micro font-semibold tracking-widest text-accent-strong uppercase`}>
+            {config.eyebrow}
+          </p>
+          <h1 {...rise(90)} className={`${rise(90).className} text-display text-fg`}>
+            {config.title} {config.highlight ? <span className="text-terracotta">{config.highlight}</span> : null}
+          </h1>
+          <p {...rise(200)} className={`${rise(200).className} max-w-lg text-body-lg text-fg-secondary`}>
+            {config.body}
+          </p>
+          <div {...rise(300)} className={`${rise(300).className} flex flex-wrap gap-3`}>
+            <Button asChild size="lg">
+              <Link href={config.primary.href}>
+                {config.primary.label} <ArrowRight />
+              </Link>
             </Button>
-          ) : null}
+            {config.secondary ? (
+              <Button asChild size="lg" variant="secondary">
+                <Link href={config.secondary.href}>{config.secondary.label}</Link>
+              </Button>
+            ) : null}
+          </div>
+          <ul {...rise(400)} className={`${rise(400).className} mt-2 flex flex-wrap gap-x-6 gap-y-2 text-body-sm text-fg-secondary`}>
+            {[
+              { icon: Download, label: "Instant digital access" },
+              { icon: InfinityIcon, label: "Lifetime library" },
+              { icon: Sparkles, label: "Free version updates" },
+            ].map(({ icon: Icon, label }) => (
+              <li key={label} className="flex items-center gap-2">
+                <Icon className="size-4 text-accent-strong" aria-hidden /> {label}
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-2 text-body-sm text-fg-secondary">
-          {[
-            { icon: Download, label: "Instant digital access" },
-            { icon: InfinityIcon, label: "Lifetime library" },
-            { icon: Sparkles, label: "Free version updates" },
-          ].map(({ icon: Icon, label }) => (
-            <li key={label} className="flex items-center gap-2">
-              <Icon className="size-4 text-accent-strong" aria-hidden /> {label}
-            </li>
-          ))}
-        </ul>
       </div>
-      {covers.length >= 3 ? (
-        <div aria-hidden className="relative mx-auto hidden h-96 w-full max-w-md md:block">
-          <div className="absolute inset-x-6 bottom-2 h-6 rounded-full bg-line blur-md" />
-          {covers.map((c, i) => (
-            <div
-              key={c.id}
-              className="absolute bottom-8 w-44 transition-transform duration-slow ease-out-soft"
-              style={{ left: `${8 + i * 26}%`, transform: `rotate(${(i - 1) * 7}deg) translateY(${i === 1 ? -24 : 0}px)`, zIndex: i === 1 ? 2 : 1 }}
-            >
-              <BookCover id={c.id} title={c.title} coverUrl={c.coverUrl} spineColor={c.spineColor} typeLabel={c.typeLabel} priority className="shadow-3" />
-            </div>
-          ))}
-        </div>
-      ) : null}
+
+      <div className="relative lg:hidden">
+        <HeroScene src={image} className="w-full" />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-linear-to-b from-canvas to-transparent" />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-linear-to-t from-canvas to-transparent" />
+      </div>
     </section>
   );
 }
