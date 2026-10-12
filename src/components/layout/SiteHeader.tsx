@@ -66,17 +66,17 @@ export function SiteHeader({ user, cartCount = 0, variant = "default" }: SiteHea
         <MobileNavDrawer links={links} pathname={pathname} />
         <Logo />
 
-        <nav aria-label="Primary" className="ml-4 hidden lg:block">
+        <nav aria-label="Primary" className="ml-2 hidden lg:block xl:ml-4">
           <ul className="flex items-center gap-1">
             {links.map((link) => {
               const active = isActive(pathname, link.href);
               return (
-                <li key={link.href}>
+                <li key={link.href} className={cn(link.href === "/" && "hidden 2xl:block")}>
                   <Link
                     href={link.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "rounded-full px-3 py-1.5 text-label font-medium whitespace-nowrap transition-colors duration-fast",
+                      "rounded-full px-2.5 py-1.5 text-label font-medium whitespace-nowrap transition-colors duration-fast 2xl:px-3",
                       active ? "bg-surface text-fg shadow-1" : "text-fg-secondary hover:text-fg",
                     )}
                   >
@@ -92,7 +92,7 @@ export function SiteHeader({ user, cartCount = 0, variant = "default" }: SiteHea
           <button
             type="button"
             onClick={onOpenSearch}
-            className="hidden h-10 w-72 items-center gap-2 rounded-full border border-line bg-surface/80 px-4 text-left text-body-sm whitespace-nowrap text-fg-muted hover:border-line-strong xl:flex"
+            className="hidden h-10 w-56 items-center gap-2 rounded-full border border-line bg-surface/80 px-4 text-left text-body-sm whitespace-nowrap text-fg-muted hover:border-line-strong xl:flex 2xl:w-72"
           >
             <Search className="size-4" aria-hidden />
             <span className="flex-1 truncate">Search books, guides, topics…</span>

@@ -12,6 +12,7 @@ export const primaryNav: NavLink[] = [
   { label: "Workbooks", href: "/workbooks" },
   { label: "Collections", href: "/collections" },
   { label: "Free Resources", href: "/free-resources" },
+  { label: "Tech & Culture", href: "/tech-culture" },
 ];
 
 /** Compact variant used on system-state pages (C8). */
@@ -32,6 +33,7 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
       { label: "Workbooks", href: "/workbooks" },
       { label: "Collections", href: "/collections" },
       { label: "Free Resources", href: "/free-resources" },
+      { label: "Tech & Culture", href: "/tech-culture" },
     ],
   },
   {

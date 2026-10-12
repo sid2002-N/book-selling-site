@@ -46,3 +46,22 @@ test.describe("storefront (signed out)", () => {
     await expect(page.getByRole("heading", { name: "Page Not Found" })).toBeVisible();
   });
 });
+
+test.describe("tech & culture", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("opens from the menu and shows stories or an honest empty state", async ({ page, isMobile }) => {
+    await page.goto("/");
+    if (isMobile) {
+      await page.getByRole("button", { name: /menu/i }).first().click();
+    }
+    await page.getByRole("link", { name: "Tech & Culture" }).first().click();
+    await expect(page).toHaveURL(/\/tech-culture$/);
+    await expect(page.getByRole("heading", { level: 1, name: "Tech & Culture" })).toBeVisible();
+    // Either live headlines (each opening the publisher in a new tab) or the newsroom-quiet state.
+    const story = page.locator("a[target=_blank][rel~=noopener]").first();
+    const quiet = page.getByRole("heading", { name: /newsroom is quiet|No stories here yet/ });
+    await expect(story.or(quiet).first()).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
+  });
+});

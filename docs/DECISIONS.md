@@ -76,3 +76,17 @@ Context: · Decision: · Alternatives: · Reason: · Consequences (positive / tr
   - Product rating aggregates count approved reviews only.
 - **Recommendations.** Unowned titles from the reader's owned categories (featured first), falling back to featured titles. No popularity numbers are shown.
 - **Demo library.** `seed:demo` gives the demo reader six titles as `admin_grant` items, not fake purchases, so no orders or revenue are invented.
+
+## DEC-036 — Tech & Culture page (live news digest)
+
+**Accepted (12 Oct 2026).** `/tech-culture`, linked from the main menu and footer.
+- **Sources.** Headlines come from publisher-provided public feeds: the Hacker News API, The Verge, Ars Technica, WIRED Culture and The Guardian Culture. The list can be replaced with the `NEWS_FEEDS` env var (JSON, validated; invalid input falls back to the defaults).
+- **Display.** Only the title, a short plain-text summary (≤220 chars), the source and the time are shown. Every story links to the original article in a new tab, and KRM.lib never hosts or rewrites articles. A footer note attributes all sources.
+- **Freshness and failure.** Feeds are cached for 15 minutes in the Next data cache, with a 6 s timeout and a 3 MB size cap per feed. Sources fail independently: a broken feed shows as "unavailable", and if every feed fails the page shows an honest "newsroom is quiet" state.
+- **Safety.** Feed markup is decoded and stripped to text, and is never rendered as HTML. Links must be http(s). No remote images are loaded, for privacy, consistency and performance.
+- **Motion** (first use of the motion layer; rules are in `globals.css`):
+  - self-drawing hero network art, a word-by-word title, and a "live" pulse
+  - a looping headline ticker that pauses on hover and focus
+  - staggered scroll reveals, growing discussion bars, and headline underline sweeps
+  - all of it disabled under `prefers-reduced-motion`, and reveals never hide content without JS
+- **Menu bar.** With eight items, "Home" is shown only at 2xl (the logo links home below that), and the search pill is narrower at xl, so the bar fits from 1024 px up (checked at 1024–1920).
