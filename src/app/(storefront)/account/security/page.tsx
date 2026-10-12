@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { hasPasswordCredential, listSessions, requireUserPage } from "@/modules/auth";
+import { hasPasswordCredential, listSessions, requireUserPage, safeNext } from "@/modules/auth";
 
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { SessionList } from "./SessionList";
@@ -32,7 +32,7 @@ export default async function SecurityPage({ searchParams }: PageProps<"/account
           <h2 id="twofa" className="text-h3">Two-Factor Authentication</h2>
           <p className="text-body-sm text-fg-muted">Add an extra layer of security with an authenticator app.</p>
         </div>
-        <TwoFactorSetup enabled={session.user.twoFactorEnabled} isAdmin={session.user.isAdmin} autoStart={params.setup2fa === "1"} />
+        <TwoFactorSetup enabled={session.user.twoFactorEnabled} isAdmin={session.user.isAdmin} autoStart={params.setup2fa === "1"} next={typeof params.next === "string" ? safeNext(params.next) : null} />
       </section>
 
       <section aria-labelledby="password" className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-6">

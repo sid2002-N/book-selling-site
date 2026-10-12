@@ -12,7 +12,7 @@ import { confirmTwoFactorAction, disableTwoFactorAction, startTwoFactorAction } 
 
 type Step = { kind: "intro" } | { kind: "scan"; qrDataUrl: string; secret: string } | { kind: "codes"; codes: string[] };
 
-export function TwoFactorSetup({ enabled, isAdmin, autoStart }: { enabled: boolean; isAdmin: boolean; autoStart?: boolean }) {
+export function TwoFactorSetup({ enabled, isAdmin, autoStart, next }: { enabled: boolean; isAdmin: boolean; autoStart?: boolean; next?: string | null }) {
   const [step, setStep] = useState<Step>({ kind: "intro" });
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -60,7 +60,7 @@ export function TwoFactorSetup({ enabled, isAdmin, autoStart }: { enabled: boole
               <Download /> Download
             </a>
           </Button>
-          <Button onClick={() => window.location.reload()}>Done</Button>
+          <Button onClick={() => (next ? window.location.assign(next) : window.location.reload())}>{next ? "Continue" : "Done"}</Button>
         </div>
       </div>
     );

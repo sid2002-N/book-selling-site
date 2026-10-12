@@ -56,3 +56,15 @@ export async function requireAdminPage(permission: PermissionKey, path: string):
   if (!ctx || !hasPermission(ctx, permission)) redirect("/403");
   return ctx;
 }
+
+/** Layout guard for the whole /admin area: signed-in, active admin, 2FA set up and passed. */
+export async function requireAdminArea(path: string): Promise<AdminContext> {
+  const session = await getCurrentSession();
+  if (!session) redirect(`/login?next=${encodeURIComponent(path)}`);
+  if (!session.user.isAdmin) redirect("/403");
+  if (!session.user.twoFactorEnabled) redirect(`/account/security?setup2fa=1&next=${encodeURIComponent(path)}`);
+  if (!session.twoFactorPassed) redirect(`/2fa?next=${encodeURIComponent(path)}`);
+  const ctx = await getAdminContext();
+  if (!ctx) redirect("/403");
+  return ctx;
+}

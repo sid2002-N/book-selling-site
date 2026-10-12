@@ -90,3 +90,35 @@ Context: · Decision: · Alternatives: · Reason: · Consequences (positive / tr
   - staggered scroll reveals, growing discussion bars, and headline underline sweeps
   - all of it disabled under `prefers-reduced-motion`, and reveals never hide content without JS
 - **Menu bar.** With eight items, "Home" is shown only at 2xl (the logo links home below that), and the search pill is narrower at xl, so the bar fits from 1024 px up (checked at 1024–1920).
+
+## DEC-037 — Minimum admin (M6)
+
+**Accepted (12 Oct 2026).** `/admin` with a dense espresso shell; nav items appear only with the matching permission.
+- **Access.** Every `/admin` page needs a signed-in, active admin with 2FA enabled *and* passed this session (`requireAdminArea` in the layout, `requireAdminPage(permission)` per page). An admin without `analytics.read` is sent to the first area they can use, not a 403.
+- **Services, not pages, enforce rules.** `src/modules/backoffice/*` calls `requirePermission` in every read and mutation and writes an `audit_log` entry for every mutation (denials are logged as `permission_denied` security events). Server Actions and the upload route are thin wrappers.
+- **Products — the 11-step flow** (UX Flow 16) is a stepper over one draft: basic info, cover, file and versions, preview pages, metadata, pricing (INR and USD set separately, no FX), categories, SEO, contents and FAQ, then review and publish.
+  - **Required to publish:** title and slug, short and full descriptions, a primary category, and a price in both currencies (exactly 0 for free resources). Non-bundles also need a deliverable file and at least one watermarked preview; bundles need two or more items. Cover, ToC, FAQ and SEO are recommended.
+  - **Enforcement.** The same pure `readinessChecks` drives the checklist and the server-side publish gate. Edits that would leave a *published* product incomplete roll back inside the transaction.
+- **Uploads.** Uploads go multipart to `POST /api/v1/admin/products/:id/uploads`.
+  - **Validation.** Types are decided by magic bytes. Covers and previews must be PNG, JPEG or WebP up to 8 MB; deliverables must be PDF or ZIP up to 90 MB. PDFs must parse, and their page count is recorded.
+  - **Covers and previews** are re-encoded to WebP in the public bucket. Previews are stamped with a visible "KRM.lib · Preview" watermark.
+  - **Deliverables** go to the private bucket with a SHA-256 checksum.
+  - The proxy body limit is raised to 95 MB (`proxyClientMaxBodySize`).
+  - Direct-to-R2 presigned uploads remain a later optimisation.
+- **Versions.** An upload becomes a draft version (one draft at a time). Before first publish it is released by Publish; after that, "Release" makes it current, supersedes the old version, and owners see "Update available".
+- **Lifecycle.** draft → published ⇄ unpublished, and anything not live can be archived and later restored to draft. Buyers keep what they own throughout. Catalogue changes revalidate the storefront layout, so the shelf, categories, search and sitemap pick them up with no code change.
+- **Operations.**
+  - **Orders.** Tabs and filters live in the URL. The order view shows payments with their provider transactions. Admins can make full or partial refunds (`orders.refund`, capped at the refundable balance, one refund in flight at a time) and approve or reject customer requests. Rejecting requires a reason, which is emailed to the customer.
+  - **Payments** are re-checked with the provider (`payments.manage`). The provider's answer is authoritative, never the admin.
+  - **Customers** can be blocked (reason required; this signs them out everywhere and keeps their library), unblocked, or signed out of all sessions. Admin accounts can't be changed here.
+  - **Reviews.** Moderation recomputes ratings from approved reviews only.
+  - **Coupons.** Codes are unique and upper-case. After the first redemption the code and terms are locked.
+  - **Categories** support create, edit and hide.
+  - **Audit log** viewer (`security.read`).
+- **Dashboard** figures all come from source rows:
+  - revenue per currency (paid order value minus completed refunds)
+  - paid orders, new customers and completed downloads, each against the previous 30 days
+  - a zero-filled daily revenue chart
+  - top products
+  - items needing attention (refund requests, pending reviews, failed webhooks)
+- **Not in M6 (out of scope, not faked):** collections editor, authors CRUD, analytics suite, support desk, admin user and role management, and store settings UI. Those links are absent rather than dead.

@@ -18,9 +18,11 @@ export default defineConfig({
   timeout: 60_000,
   use: { baseURL: remote ?? `http://localhost:${PORT}`, trace: "retain-on-failure", launchOptions },
   projects: [
-    { name: "setup", testMatch: /auth\.setup\.ts/ },
-    { name: "desktop", use: { ...devices["Desktop Chrome"], launchOptions, storageState: "tests/e2e/.auth/reader.json" }, dependencies: ["setup"] },
-    { name: "mobile", use: { ...devices["Pixel 7"], launchOptions, storageState: "tests/e2e/.auth/reader.json" }, dependencies: ["setup"] },
+    { name: "setup", testMatch: /^auth\.setup\.ts$/ },
+    { name: "admin-setup", testMatch: /admin\.setup\.ts/ },
+    { name: "desktop", testIgnore: /admin\.spec\.ts/, use: { ...devices["Desktop Chrome"], launchOptions, storageState: "tests/e2e/.auth/reader.json" }, dependencies: ["setup"] },
+    { name: "mobile", testIgnore: /admin\.spec\.ts/, use: { ...devices["Pixel 7"], launchOptions, storageState: "tests/e2e/.auth/reader.json" }, dependencies: ["setup"] },
+    { name: "admin", testMatch: /admin\.spec\.ts/, use: { ...devices["Desktop Chrome"], launchOptions, storageState: "tests/e2e/.auth/admin.json" }, dependencies: ["setup", "admin-setup"] },
   ],
   webServer: remote
     ? undefined

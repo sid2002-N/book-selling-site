@@ -29,6 +29,21 @@ Razorpay takes INR and Stripe takes USD; the customer's currency (footer switche
 
 The reconcile cron in `vercel.json` runs daily (03:00 UTC), which the Hobby plan allows. On Pro you can tighten it to `*/15 * * * *`. Customers waiting on the status page don't depend on it: that page re-checks the provider directly.
 
+## Admin
+
+`/admin` is for staff accounts. Every admin must turn on two-factor authentication. Seeded demo admin: `admin@krmlib.local` (the password comes from `SEED_ADMIN_PASSWORD`). The first sign-in asks you to set up 2FA.
+
+To add a book:
+1. Go to **Products → New product**.
+2. Work through the steps: details, cover, PDF, preview pages, pricing, categories and so on.
+3. Press **Publish**. It stays disabled until every required step is done.
+
+Once published, the book shows up on the shelf, in the catalogue and in search.
+
+Uploads are stored in `./.storage` in development. Production needs R2 (`STORAGE_DRIVER=r2`).
+
+What staff can do depends on their role (`super_admin`, `catalog_manager`, `finance`, `support`, `content_editor`, `analyst`). Every change they make is recorded in the audit log.
+
 ## Troubleshooting a deployment
 
 Open `/api/health` on the deployed site. It reports, by name only and never with values:

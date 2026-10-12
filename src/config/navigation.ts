@@ -66,38 +66,41 @@ export const accountNav: NavLink[] = [
   { label: "Settings", href: "/account/settings" },
 ];
 
-export type AdminNavItem = { label: string; href: string; permission: string };
+export type AdminNavIcon = "dashboard" | "products" | "categories" | "orders" | "refunds" | "payments" | "customers" | "reviews" | "coupons" | "audit";
+export type AdminNavItem = { label: string; href: string; permission: string; icon: AdminNavIcon };
 export type AdminNavGroup = { label: string | null; items: AdminNavItem[] };
 
 /** Grouped admin tree (ARCHITECTURE §7). Items render only with the matching permission. */
 export const adminNav: AdminNavGroup[] = [
-  { label: null, items: [{ label: "Dashboard", href: "/admin", permission: "analytics.read" }] },
+  { label: null, items: [{ label: "Dashboard", href: "/admin", permission: "analytics.read", icon: "dashboard" }] },
   {
     label: "Catalog",
     items: [
-      { label: "Products", href: "/admin/products", permission: "products.read" },
-      { label: "Categories", href: "/admin/categories", permission: "products.read" },
-      { label: "Collections", href: "/admin/collections", permission: "products.read" },
+      { label: "Products", href: "/admin/products", permission: "products.read", icon: "products" },
+      { label: "Categories", href: "/admin/categories", permission: "products.read", icon: "categories" },
     ],
   },
   {
     label: "Commerce",
     items: [
-      { label: "Orders", href: "/admin/orders", permission: "orders.read" },
-      { label: "Payments", href: "/admin/payments", permission: "payments.read" },
-      { label: "Refunds", href: "/admin/refunds", permission: "orders.read" },
+      { label: "Orders", href: "/admin/orders", permission: "orders.read", icon: "orders" },
+      { label: "Refunds", href: "/admin/refunds", permission: "orders.read", icon: "refunds" },
+      { label: "Payments", href: "/admin/payments", permission: "payments.read", icon: "payments" },
     ],
   },
   {
-    label: "Customers",
-    items: [{ label: "Customers", href: "/admin/customers", permission: "customers.read" }],
+    label: "People",
+    items: [
+      { label: "Customers", href: "/admin/customers", permission: "customers.read", icon: "customers" },
+      { label: "Reviews", href: "/admin/reviews", permission: "reviews.moderate", icon: "reviews" },
+    ],
   },
   {
     label: "Marketing",
-    items: [{ label: "Coupons", href: "/admin/coupons", permission: "marketing.manage" }],
+    items: [{ label: "Coupons", href: "/admin/coupons", permission: "marketing.manage", icon: "coupons" }],
   },
   {
-    label: "Moderation",
-    items: [{ label: "Reviews", href: "/admin/reviews", permission: "reviews.moderate" }],
+    label: "Security",
+    items: [{ label: "Audit log", href: "/admin/audit", permission: "security.read", icon: "audit" }],
   },
 ];
